@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registration Form | Bumblebee Foundation</title>
+  <link rel="stylesheet" href="repo/Registration.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Roboto+Slab:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Header with Logo and Navbar -->
+  <header>
+    <div class="navbar-container">
+      <div class="logo">
+        <a href="Home.html">
+          <img src="repo/logo.png" alt="Bumblebee Foundation Logo">
+        </a>
+      </div>
+      <nav>
+        <ul>
+          <li><a href="Home.html">Home</a></li>
+          <li><a href="Donation.html">Donation</a></li>
+          <li><a href="FinancialReports.html">Proof Of Payment</a></li>
+          <li><a href="SelectRole.html">Login/Register</a></li>
+          <li><a href="Registration.html">Company Signup</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Registration Form -->
+  <div class="container">
+    <h2>Company Registration Form</h2>
+    <form id="company-registration-form">
+      <div class="form-group">
+        <label for="company-name">Company Name:</label>
+        <input type="text" id="company-name" name="company_name" required>
+      </div>
+      <div class="form-group">
+        <label for="contact-name">Contact Name:</label>
+        <input type="text" id="contact-name" name="contact_name" required>
+      </div>
+      <div class="form-group">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+      </div>
+      <div class="form-group">
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+      </div>
+      <div class="form-group">
+        <label for="confirm-password">Confirm Password:</label>
+        <input type="password" id="confirm-password" name="confirm_password" required>
+      </div>
+      <div class="form-group">
+        <label for="interest">Brief Description of Interest:</label>
+        <textarea id="interest" name="interest" rows="4" placeholder="Explain your interest in supporting the Bumblebee Foundation..." required></textarea>
+      </div>
+      <div class="form-group">
+        <button type="submit">Register</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2024 Bumblebee Foundation. All rights reserved.</p>
+  </footer>
+  <script>
+
+
+    document.getElementById('company-registration-form').addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const companyName = document.getElementById('company-name').value;
+        const contactName = document.getElementById('contact-name').value;
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirm-password').value;
+        const interest = document.getElementById('interest').value;
+
+        if (password !== confirmPassword) {
+            alert('Passwords do not match');
+            return;
+        }
+
+        try {
+            const response = await fetch('http://localhost:8003/auth/registerCompany', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ company_name: companyName, contact_name: contactName, email, password, interest }),
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                alert('Company registered successfully! Redirecting to login...');
+                setTimeout(() => {
+                    window.location.href = 'SelectRole.html';
+                }, 2000);
+            } else {
+                alert(result.error || 'Registration failed.');
+            }
+        } catch (error) {
+            console.error('Error registering company:', error);
+            alert('An error occurred during registration. Please try again.');
+        }
+    });
+
+
+  </script> 
+</body>
+</html>

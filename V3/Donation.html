@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donation Form</title>
+    <link rel="stylesheet" href="repo/donation.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="navbar-container">
+            <div class="logo">
+                <img src="repo/LOGO.png" alt="Logo">
+            </div>
+            <nav>
+                <ul class="navbar">
+                    <li><a href="Home.html">Home</a></li>
+                    <li><a href="Donation.html">Donation</a></li>
+                    <li><a href="FinancialReports.html">Proof Of Payment</a></li>
+                    <li><a href="SelectRole.html">Login/Register</a></li>
+                    <li><a href="Registration.html">Company Signup</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <h2>Make a Donation</h2>
+        <form id="donation-form">
+            <!-- Amount Input -->
+            <div class="form-group">
+                <label for="amount">Donation Amount:</label>
+                <input type="number" id="amount" name="amount" min="1" required>
+            </div>
+
+            <!-- Company Dropdown -->
+            <div class="form-group">
+                <label for="company-select">Select Company:</label>
+                <select id="company-select" name="company" required>
+                    <option value="" disabled selected>Select a company</option>
+                    <!-- Companies will be dynamically populated here -->
+                </select>
+            </div>
+
+            <!-- Payment Method Dropdown -->
+            <div class="form-group">
+                <label for="payment-method">Payment Method:</label>
+                <select id="payment-method" name="payment-method" required>
+                    <option value="Payfast">Payfast</option>
+                    <option value="PayPal">PayPal</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn">Proceed to Payment</button>
+        </form>
+    </div>
+
+    <script>
+        // Fetch and populate the company dropdown
+        async function populateCompanies() {
+            try {
+                const response = await fetch('http://localhost:8003/auth/companies'); // Fetch companies from the server
+                if (!response.ok) {
+                    throw new Error("Failed to fetch companies");
+                }
+
+                const companies = await response.json();
+                const companySelect = document.getElementById("company-select");
+
+                companySelect.innerHTML = '<option value="" disabled selected>Select a company</option>'; // Reset dropdown
+
+                companies.forEach(company => {
+                    const option = document.createElement("option");
+                    option.value = company._id; // Use _id as value
+                    option.textContent = company.companyName; // Display companyName
+                    companySelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error("Error fetching companies:", error);
+                alert("Failed to load companies. Please try again later.");
+            }
+        }
+
+        // Submit donation form
+        document.getElementById('donation-form').addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const amount = document.getElementById('amount').value;
+    const companyId = document.getElementById('company-select').value;
+    const paymentMethod = document.getElementById('payment-method').value;
+
+    if (!amount || !companyId || !paymentMethod) {
+        alert('Please fill out all fields.');
+        return;
+    }
+
+    const reference = `DON-${Date.now()}`; // Generate a unique reference
+
+    try {
+        const response = await fetch('http://localhost:8003/payments/create', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            },
+            body: JSON.stringify({ amount, companyId, paymentMethod, reference }),
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            alert(`Donation failed: ${result.error || 'Unknown error'}`);
+            return;
+        }
+
+        alert('Donation successful!');
+        if (paymentMethod === 'Payfast') {
+            redirectToPayfast(amount, reference);
+        } else {
+            window.location.href = 'UserManagementDashboard.html';
+        }
+    } catch (error) {
+        console.error('Error submitting donation:', error);
+        alert('An error occurred. Please try again.');
+    }
+});
+
+        // Function to redirect to PayFast payment page
+        function redirectToPayfast(amount, itemName) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = 'https://sandbox.payfast.co.za/eng/process';
+
+            // PayFast hidden fields
+            const hiddenFields = [
+                { name: 'merchant_id', value: '10035694' },
+                { name: 'merchant_key', value: 'unhgw4gbvtc5n' },
+                { name: 'amount', value: amount },
+                { name: 'return_url', value: 'http://127.0.0.1:5500/Donationsuccess.html' },
+                { name: 'cancel_url', value: 'http://127.0.0.1:5500/DonationCancel.html' },
+                { name: 'notify_url', value: 'https://99b3-41-121-19-110.ngrok-free.app/notify' }, // Your server's URL
+                { name: 'item_name', value: itemName || 'Donation' },
+                { name: 'email_confirmation', value: '1' },
+                { name: 'confirmation_address', value: 'customer@example.com' },
+            ];
+
+            // Append each hidden field to the form
+            hiddenFields.forEach(field => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = field.name;
+                input.value = field.value;
+                form.appendChild(input);
+            });
+
+            // Submit the form to PayFast
+            document.body.appendChild(form);
+            form.submit();
+        }
+
+        // Initialize the page
+        window.onload = populateCompanies;
+    </script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Authentication - Donor</title>
+    <link rel="stylesheet" href="repo/Registers.css">
+</head>
+<body>
+    <h1>Register as Donor</h1>
+    <form id="register-form">
+        <div>
+            <label for="username">Username:</label>
+            <input type="text" id="username" required>
+        </div>
+        <div>
+            <label for="email">Email:</label>
+            <input type="email" id="email" required>
+        </div>
+        <div>
+            <label for="password">Password:</label>
+            <input type="password" id="password" required>
+        </div>
+        <input type="hidden" id="role" value="donor"> <!-- Role hidden input -->
+        <button type="submit">Register</button>
+    </form>
+    <div id="registration-result"></div>
+
+    <script>
+        document.getElementById('register-form').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const role = document.getElementById('role').value;
+
+            try {
+                const response = await fetch('http://localhost:8003/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, email, password, role }),
+                });
+
+                const result = await response.json();
+                const registrationResult = document.getElementById('registration-result');
+                
+                if (response.ok) {
+                    registrationResult.textContent = 'Registration successful!';
+                    registrationResult.style.color = 'green';
+                } else {
+                    registrationResult.textContent = 'Registration failed: ' + (result.error || 'Please try again.');
+                    registrationResult.style.color = 'red';
+                }
+            } catch (error) {
+                console.error("Error during registration:", error);
+            }
+        });
+    </script>
+</body>
+</html>

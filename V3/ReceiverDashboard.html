@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management Dashboard - Bumblebee Foundation</title>
+    <link rel="stylesheet" href="repo/User.css">
+    <header>
+        <div class="navbar-container">
+          <div class="logo">
+            <a href="Home.html">
+              <img src="repo/logo.png" alt="Bumblebee Foundation Logo">
+            </a>
+          </div>
+          <nav>
+            <ul>
+              <li><a href="Home.html">Home</a></li>
+              <li><a href="Donation.html">Donation</a></li>
+              <li><a href="FinancialReports.html">Proof Of Payment</a></li>
+              <li><a href="SelectRole.html">Login/Register</a></li>
+              <li><a href="Registration.html">Company Signup</a></li>
+            </ul>
+          </nav>
+        </div>
+      </header>
+</head>
+<body>
+    <h1>Welcome to Your Dashboard</h1>
+    
+    <section id="user-details">
+        <p><strong>Username:</strong> <span id="username"></span></p>
+        <p><strong>Email:</strong> <span id="email"></span></p>
+        <p><strong>Role:</strong> <span id="role"></span></p>
+    </section>
+
+    <!-- Password change section -->
+    <section id="password-change">
+        <h2>Change Password</h2>
+        <form id="change-password-form">
+            <div>
+                <label for="new-password">New Password:</label>
+                <input type="password" id="new-password" required>
+            </div>
+            <button type="submit">Change Password</button>
+        </form>
+    </section>
+
+    <!-- Donation Section -->
+    <section id="donation-section">
+        <h2>Make a Donation</h2>
+        <button id="donate-button">Go to Donation Page</button>
+    </section>
+
+    <script>
+        window.onload = async function () {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert('No token found. Redirecting to login.');
+                window.location.href = 'SelectRole.html';
+                return;
+            }
+    
+            try {
+                const response = await fetch('http://localhost:8003/auth/user', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                    },
+                });
+    
+                if (response.status === 403) {
+                    alert("Session expired. Please log in again.");
+                    localStorage.removeItem('token');
+                    window.location.href = 'SelectRole.html';
+                    return;
+                }
+    
+                const result = await response.json();
+                if (response.ok) {
+                    document.getElementById('username').textContent = result.username || 'No username found';
+                    document.getElementById('email').textContent = result.email || 'No email found';
+                    document.getElementById('role').textContent = result.role || 'No role found';
+                } else {
+                    alert("Failed to fetch user details.");
+                    window.location.href = 'SelectRole.html';
+                }
+            } catch (error) {
+                console.error('Error fetching user details:', error);
+                alert('An error occurred. Redirecting to login.');
+                window.location.href = 'SelectRole.html';
+            }
+        };
+    
+        // Handle password change
+        document.getElementById('change-password-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+    
+            const newPassword = document.getElementById('new-password').value;
+    
+            if (newPassword.length < 6) {
+                alert('Password must be at least 6 characters long');
+                return;
+            }
+    
+            alert('Password changed successfully!'); // Placeholder logic
+        });
+    
+        // Handle donation button click
+        document.getElementById('donate-button').addEventListener('click', function () {
+            window.location.href = "Donation.html";
+        });
+    </script>
+<script>
+    window.onload = async function () {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            alert('No token found. Redirecting to login.');
+            window.location.href = 'SelectRole.html';
+            return;
+        }
+
+        try {
+            const response = await fetch('http://localhost:8003/auth/user', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+
+            if (response.status === 403) {
+                alert("Session expired. Please log in again.");
+                localStorage.removeItem('token');
+                window.location.href = 'SelectRole.html';
+                return;
+            }
+
+            const result = await response.json();
+            if (response.ok) {
+                document.getElementById('username').textContent = result.username || 'No username found';
+                document.getElementById('email').textContent = result.email || 'No email found';
+                document.getElementById('role').textContent = result.role || 'No role found';
+            } else {
+                alert("Failed to fetch user details.");
+                window.location.href = 'SelectRole.html';
+            }
+        } catch (error) {
+            console.error('Error fetching user details:', error);
+            alert('An error occurred. Redirecting to login.');
+            window.location.href = 'SelectRole.html';
+        }
+    };
+
+    // Handle password change
+    document.getElementById('change-password-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const newPassword = document.getElementById('new-password').value;
+
+        if (newPassword.length < 6) {
+            alert('Password must be at least 6 characters long');
+            return;
+        }
+
+        alert('Password changed successfully!'); // Placeholder logic
+    });
+
+    // Handle donation button click
+    document.getElementById('donate-button').addEventListener('click', function () {
+        window.location.href = "Donation.html";
+    });
+</script>
+    
+</body>
+</html>

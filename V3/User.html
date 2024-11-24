@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>User Dashboard | Bumblebee Foundation</title>
+        <link rel="stylesheet" href="repo/Registration.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Roboto+Slab:wght@400;500&display=swap" rel="stylesheet">
+    </head>
+    <body>
+      
+        <!-- Header with Logo and Navbar -->
+        <header>
+          <div class="navbar-container">
+            <div class="logo">
+              <a href="Home.html">
+                <img src="repo/logo.png" alt="Bumblebee Foundation Logo">
+              </a>
+            </div>
+            <nav>
+              <ul>
+                <li><a href="Home.html">Home</a></li>
+                <li><a href="Donation.html">Donation</a></li>
+                <li><a href="FinancialReports.html">Proof Of Payment</a></li>
+                <li><a href="SelectRole.html">Login/Register</a></li>
+                <li><a href="Registration.html">Company Signup</a></li>
+              </ul>
+            </nav>
+          </div>
+        </header>
+
+        <div class="container">
+            <h1>User Dashboard</h1>
+
+            <!-- Donations Section -->
+            <div id="user-info">
+                <h2>Your Donations</h2>
+                <div id="donation-list"></div>
+            </div>
+
+            <!-- Proof of Payments Section -->
+            <div id="proof-of-payments">
+                <h2>Proof of Payments</h2>
+                <div id="payment-display"></div>
+            </div>
+
+            <!-- Make a Donation Section -->
+            <div id="make-donation">
+                <h2>Make a Donation</h2>
+                <form id="donation-form">
+                    <input type="number" id="donation-amount" placeholder="Enter amount (R)">
+                    <button type="submit">Donate</button>
+                </form>
+            </div>
+
+            <!-- Request Donation Section -->
+            <div id="request-donation">
+                <h2>Request a Donation</h2>
+                <form id="request-form">
+                    <input type="number" id="request-amount" placeholder="Enter amount (R)">
+                    <button type="submit">Request</button>
+                </form>
+            </div>
+
+            <!-- Change Password Section -->
+            <div id="change-password">
+                <h2>Change Password</h2>
+                <form id="change-password-form">
+                    <input type="password" id="old-password" placeholder="Old Password" required>
+                    <input type="password" id="new-password" placeholder="New Password" required>
+                    <button type="submit">Change Password</button>
+                </form>
+            </div>
+
+            <!-- Payment Report Section -->
+            <div id="report-section">
+                <h2>Payment Report</h2>
+                <input type="date" id="selectedDate">
+                <button id="showReportButton">Show Report</button>
+                <div id="reportTableContainer"></div>
+            </div>
+
+            <!-- Message Display Section -->
+            <div id="message"></div>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <p>&copy; 2024 Bumblebee Foundation. All rights reserved.</p>
+        </footer>
+
+        <!-- JavaScript -->
+        <script src="script.js"></script>
+    </body>
+</html>

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Management Dashboard</title>
+    <link rel="stylesheet" href="repo/User.css">
+    <header>
+        <div class="navbar-container">
+            <div class="logo">
+                <a href="Home.html">
+                    <img src="repo/logo.png" alt="Bumblebee Foundation Logo">
+                </a>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="Home.html">Home</a></li>
+                    <li><a href="Donation.html">Donation</a></li>
+                    <li><a href="FinancialReports.html">Proof Of Payment</a></li>
+                    <li><a href="SelectRole.html">Login/Register</a></li>
+                    <li><a href="Registration.html">Company Signup</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+</head>
+<body>
+    <h1>Welcome to the Company Dashboard</h1>
+
+    <!-- Section to view all payments made to the company -->
+    <section id="payments-section">
+        <h2>All Payments Made to Your Company</h2>
+        <table id="payments-table">
+            <thead>
+                <tr>
+                    <th>Payment ID</th>
+                    <th>Amount</th>
+                    <th>Date</th>
+                    <th>User Email</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Populated dynamically -->
+            </tbody>
+        </table>
+    </section>
+
+    <!-- Section to change the password -->
+    <section id="password-change-section">
+        <h2>Change Password</h2>
+        <form id="password-change-form">
+            <div class="form-group">
+                <label for="new-password">New Password:</label>
+                <input type="password" id="new-password" name="new-password" required>
+            </div>
+            <button type="submit" class="btn">Change Password</button>
+        </form>
+    </section>
+
+    <script>
+        // Function to manually decode JWT and extract payload
+        function parseJwt(token) {
+            const base64Url = token.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+
+            return JSON.parse(jsonPayload);
+        }
+
+        // Get companyId from the decoded token
+        function getCompanyIdFromToken() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert('No token found. Redirecting to login.');
+                window.location.href = 'SelectRole.html';
+                return null;
+            }
+
+            try {
+                const decoded = parseJwt(token); // Decode the JWT using the manual decode function
+                console.log('Decoded Token:', decoded); // Log the decoded token
+                return decoded.companyId; // Return the companyId from the decoded token
+            } catch (error) {
+                console.error('Error decoding token:', error);
+                alert('Invalid token. Please log in again.');
+                window.location.href = 'SelectRole.html';
+                return null;
+            }
+        }
+
+        // Fetch and display payments for the logged-in company
+        async function loadCompanyPayments() {
+    const companyId = getCompanyIdFromToken(); // Get companyId from the token
+
+    if (!companyId) return; // If no companyId, exit the function
+
+    const token = localStorage.getItem('token');
+    if (!token) {
+        alert('No token found. Redirecting to login.');
+        window.location.href = 'SelectRole.html';
+        return;
+    }
+
+    try {
+        // Updated URL to fetch payments for the specific company
+        const response = await fetch(`http://localhost:8003/auth/company/${companyId}/payments`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+        });
+
+        if (response.ok) {
+            const payments = await response.json();
+            console.log('Payments:', payments); // Log the payments data
+            const tableBody = document.querySelector('#payments-table tbody');
+            tableBody.innerHTML = '';
+
+            payments.forEach(payment => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${payment._id}</td>
+                    <td>${payment.amount}</td>
+                    <td>${new Date(payment.date).toLocaleDateString()}</td>
+                    <td>${payment.userEmail}</td>
+                    <td>${payment.status}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        } else {
+            alert("Failed to fetch payments.");
+        }
+    } catch (error) {
+        console.error('Error fetching payments:', error);
+        alert('An error occurred while fetching payments.');
+    }
+}
+
+        // Handle password change
+        document.getElementById('password-change-form').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const newPassword = document.getElementById('new-password').value;
+
+            if (!newPassword) {
+                alert('Please enter a new password.');
+                return;
+            }
+
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert('No token found. Redirecting to login.');
+                window.location.href = 'SelectRole.html';
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:8003/auth/change-password', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({ newPassword }),
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    alert('Password changed successfully!');
+                } else {
+                    alert(`Failed to change password: ${result.error}`);
+                }
+            } catch (error) {
+                console.error('Error changing password:', error);
+                alert('An error occurred while changing the password.');
+            }
+        });
+
+        // Initialize the page
+        window.onload = loadCompanyPayments;
+    </script>
+</body>
+</html>

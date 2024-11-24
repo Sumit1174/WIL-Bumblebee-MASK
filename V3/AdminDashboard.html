@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="repo/User.css">
+  <header>
+      <div class="navbar-container">
+        <div class="logo">
+          <a href="Home.html">
+            <img src="repo/logo.png" alt="Bumblebee Foundation Logo">
+          </a>
+        </div>
+        <nav>
+          <ul>
+            <li><a href="Home.html">Home</a></li>
+            <li><a href="Donation.html">Donation</a></li>
+            <li><a href="FinancialReports.html">Proof Of Payment</a></li>
+            <li><a href="SelectRole.html">Login/Register</a></li>
+            <li><a href="Registration.html">Company Signup</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+</head>
+<body>
+  <h1>Admin Dashboard</h1>
+
+  <!-- Section to view all users -->
+  <section id="users-section">
+    <h2>All Users</h2>
+    <table id="users-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Username</th>
+          <th>Email</th>
+          <th>Role</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Populated dynamically -->
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Section to view all companies -->
+  <section id="companies-section">
+    <h2>All Companies</h2>
+    <table id="companies-table">
+      <thead>
+        <tr>
+          <th>Company Name</th>
+          <th>Email</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Populated dynamically -->
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Section to view all payments -->
+  <section id="payments-section">
+    <h2>All Payments</h2>
+    <table id="payments-table">
+      <thead>
+        <tr>
+          <th>Payment ID</th>
+          <th>Amount</th>
+          <th>Date</th>
+        <th>Amount</th>
+        <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Populated dynamically -->
+      </tbody>
+    </table>
+  </section>
+
+  <script>
+   async function fetchData(url, tableId) {
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      const tableBody = document.querySelector(`#${tableId} tbody`);
+      tableBody.innerHTML = '';
+
+      data.forEach(item => {
+        const row = document.createElement('tr');
+        Object.values(item).forEach(value => {
+          const cell = document.createElement('td');
+          cell.textContent = value;
+          row.appendChild(cell);
+        });
+        tableBody.appendChild(row);
+      });
+    } else {
+      console.error(`Failed to fetch data from ${url}`);
+    }
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+}
+
+// Fetch all users, companies, and payments
+window.onload = function () {
+  fetchData('http://localhost:8003/auth/users', 'users-table');
+  fetchData('http://localhost:8003/auth/companies', 'companies-table');
+  fetchData('http://localhost:8003/payments/payments', 'payments-table');
+};
+  </script>
+</body>
+</html>

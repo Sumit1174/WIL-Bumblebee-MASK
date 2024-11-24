@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Sign-Up - Bumblebee Foundation</title>
+    <link rel="stylesheet" href="repo/SelectRole.css">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+    <header>
+        <div class="navbar-container">
+            <div class="logo">
+                <img src="repo/LOGO.png" alt="Bumblebee Foundation Logo">
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="Home.html">Home</a></li>
+                    <li><a href="Donation.html">Donation</a></li>
+                    <li><a href="FinancialReports.html">Proof Of Payment</a></li>
+                    <li><a href="SelectRole.html">Login/Register</a></li>
+                    <li><a href="Registration.html">Company Signup</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="google-signup-section">
+            <h2>Sign Up with Google</h2>
+            <div id="g_id_onload"
+                 data-client_id="YOUR_GOOGLE_CLIENT_ID"
+                 data-context="signup"
+                 data-ux_mode="redirect"
+                 data-login_uri="http://localhost:8003/auth/google/callback">
+            </div>
+            <div class="g_id_signin" data-type="standard"></div>
+        </section>
+    </main>
+
+    
+</body>
+<footer>
+    <p>&copy; 2024 Bumblebee Foundation. All rights reserved.</p>
+</footer>
+</html>

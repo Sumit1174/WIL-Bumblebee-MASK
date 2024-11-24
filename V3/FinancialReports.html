@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Reports</title>
+    <link rel="stylesheet" href="repo/FinancialReports.css">
+</head>
+<body>
+    <header>
+        <div class="navbar-container">
+            <div class="logo">
+                <img src="repo/LOGO.png" alt="Logo">
+            </div>
+            <nav>
+                <ul class="navbar">
+                    <li><a href="Home.html">Home</a></li>
+                    <li><a href="Donation.html">Donation</a></li>
+                    <li><a href="FinancialReports.html">Proof Of Payment</a></li>
+                    <li><a href="SelectRole.html">Login/Register</a></li>
+                    <li><a href="Registration.html">Company Signup</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <div class="container">
+        <h2>Proof of Payments</h2>
+        <div class="report" id="payments-container">
+            <form id="payment-form" onsubmit="return false;">
+                <h3>Selection</h3>
+                <p>This report provides a list of payments made on the selected date.</p>
+                <label for="selectedDate">Date:</label>
+                <input type="date" id="selectedDate">
+                <button id="showReportButton" class="btn">Show Donation Report</button>
+            </form>
+
+            <!-- Container to display the fetched payments -->
+            <div id="reportTableContainer"></div>
+        </div>
+    </div>
+
+    <!-- Link to the script file (ensure the correct path) -->
+    <script src="./repo/script.js" defer></script>
+</body>
+<footer>
+    <p>&copy; 2024 Bumblebee Foundation. All rights reserved.</p>
+</footer>
+</html>

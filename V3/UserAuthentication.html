@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Authentication</title>
+ 
+  <header>
+    <div class="navbar-container">
+        <img src="repo/BEE.png" alt="Bumblebee Foundation Logo" class="logo">
+        <link rel="stylesheet" href="repo/Registers.css">
+        <h1>Bumblebee Foundation</h1>
+        <nav>
+            <ul>
+                <li><a href="Home.html">Home</a></li>
+                <li><a href="Donation.html">Donation</a></li>
+                <li><a href="FinancialReports.html">Proof Of Payment</a></li>
+                <li><a href="SelectRole.html">Login/Register</a></li>
+                <li><a href="Registration.html">Company Signup</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+</head>
+<body>
+  <div class="container">
+    <div class="auth-form">
+        <h2>Register as a donor:</h2>
+        <form id="register-form">
+            <input type="text" id="username" name="username" placeholder="Username" required>
+            <input type="email" id="email" name="email" placeholder="Email" required>
+            <input type="password" id="password" name="password" placeholder="Password" required>
+            <input type="hidden" id="role" name="role" value="donor"> <!-- Change the value to "receiver" or "admin" for respective pages -->
+            <button type="submit" class="btn">Register</button>
+            <div id="register-result"></div>
+        </form>
+    </div>
+</div>
+<script>
+  // Handle form submission
+  document.getElementById('register-form').addEventListener('submit', async function (event) {
+      event.preventDefault();
+
+      // Get form data
+      const username = document.getElementById('username').value;
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const role = document.getElementById('role').value;
+
+      try {
+          const response = await fetch('http://localhost:8003/auth/register', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ username, email, password, role }), // Payload for backend
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+              document.getElementById('register-result').textContent = 'Registration successful! Redirecting to login...';
+              setTimeout(() => {
+                  window.location.href = 'SelectRole.html';
+              }, 2000);
+          } else {
+              document.getElementById('register-result').textContent = data.error || 'Registration failed.';
+          }
+      } catch (error) {
+          console.error('Error during registration:', error);
+          document.getElementById('register-result').textContent = 'An error occurred. Please try again.';
+      }
+  });
+</script>
+
+</body>
+<footer>
+    <p>&copy; 2024 Bumblebee Foundation. All rights reserved.</p>
+</footer>
+</html>
+
