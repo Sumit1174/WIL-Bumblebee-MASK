@@ -5,23 +5,26 @@ on:
     branches:
       - main
 
-
 jobs:
   build:
     name: Build and analyze
-    runs-on: ubuntu-latest
+    runs-on: self-hosted  # Switch to use the self-hosted runner
     
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout source code
+        uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-      - uses: sonarsource/sonarqube-scan-action@v3
+          fetch-depth: 0  # Ensures all history is fetched for Sonar analysis
+
+      - name: Run SonarQube Scanner
+        uses: sonarsource/sonarqube-scan-action@v3
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-      # If you wish to fail your job when the Quality Gate is red, uncomment the
-      # following lines. This would typically be used to fail a deployment.
-      # - uses: sonarsource/sonarqube-quality-gate-action@master
+          SONAR_HOST_URL: "http://127.0.0.1:9000"  # Your local SonarQube instance
+
+      # Optional: Fail the job if the Quality Gate fails
+      # - name: Check Quality Gate
+      #   uses: sonarsource/sonarqube-quality-gate-action@master
       #   timeout-minutes: 5
       #   env:
       #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
